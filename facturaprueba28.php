@@ -18,11 +18,11 @@ $configApp->passFirma = "Guido1966";
 $configApp->dirAutorizados = "C:\\Directorio";
 $configApp->dirLogo = "C:\\Directorio\\logopoly.png";
 $configCorreo = new \configCorreo();
-$configCorreo->correoAsunto = "Nuevo Comprobante rueb";
+$configCorreo->correoAsunto = "Nuevo Comprobante electronico";
 $configCorreo->correoHost = "smtp.gmail.com";
-$configCorreo->correoPass = "cbboguewhwgacmfl";
+$configCorreo->correoPass = "npickryinvbinjdy";
 $configCorreo->correoPort = "465";
-$configCorreo->correoRemitente = "comprobantesabelinogarate@gmail.com";
+$configCorreo->correoRemitente = "guidoroberto.25@gmail.com";
 $configCorreo->sslHabilitado = true;
 
 //DOLAR
@@ -72,6 +72,7 @@ foreach ($detalles as $detalle) {
   $razonSocialComprador=$detalle['razonSocialComprador'];
   $direccionComprador=$detalle['direccionComprador'];
   $formapago = $detalle['formaPago'];
+  $correoComprador=$detalle['correoComprador'];
     // Agregamos el detalleFactura al array de detallesFactura
     $detallesFactura[] = $detalleFactura;
     
@@ -111,8 +112,11 @@ $pago = new pagos();
 $pago->formaPago = $formapago;
 $pago->total = $total + $total * 0.12;
 $pagosArray[] = $pago;
-
-
+$camposAdicionales = array();
+$campoAdicional = new campoAdicional();
+$campoAdicional->nombre = "Email";
+$campoAdicional->valor = $correoComprador;
+$camposAdicionales[0] = $campoAdicional;
 
 echo "El valor total de la factura es: " . $total;
 
@@ -150,16 +154,19 @@ $factura->infoAdicional = $camposAdicionales;
 
 
 /* Si queremos primero enviar al cliente el email y despues al sri utilizar este bloque
-   */$procesarComprobante = new procesarComprobante();
-  $procesarComprobante->comprobante = $factura;
-  $procesarComprobante->envioSRI = false; //El sistema si es false 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia Email al cliente 5-No devuelve respuesta
-  $res = $procesarComprobanteElectronico->procesarComprobante($procesarComprobante);
-  if($res->return->estadoComprobante == "FIRMADO"){
-  $procesarComprobante = new procesarComprobante();
-  $procesarComprobante->comprobante = $factura;
-  $procesarComprobante->envioSRI = true; //El sistema si es true 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia SRI 5-No devuelve respuesta
-  $res = $procesarComprobanteElectronico->procesarComprobante($procesarComprobante);
-  }
+   */
+  
+   $procesarComprobante = new procesarComprobante();
+   $procesarComprobante->comprobante = $factura;
+   $procesarComprobante->envioSRI = true; //El sistema si es true 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia SRI 5-Nos devuelve respuesta
+   $res = $procesarComprobanteElectronico->procesarComprobante($procesarComprobante);
+   
+   if ($res->return->estadoComprobante == "AUTORIZADO") {
+       $procesarComprobante = new procesarComprobante();
+       $procesarComprobante->comprobante = $factura;
+       $procesarComprobante->envioSRI = false; //El sistema si es false 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia Email al cliente 5-No devuelve respuesta
+       $procesarComprobanteElectronico->procesarComprobante($procesarComprobante);
+   }
 
 echo '<pre>';
 var_dump($res);
