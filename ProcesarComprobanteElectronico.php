@@ -489,13 +489,13 @@ class ProcesarComprobanteElectronico extends SoapClient {
         'reenviarEmail' => 'reenviarEmail',
         'reenviarEmailResponse' => 'reenviarEmailResponse'
     );
-    //http://162.243.172.38:8080/MasterOffline/ProcesarComprobanteElectronico?wsdl 
+    //http://146.190.222.208:8080/MasterOffline/ProcesarComprobanteElectronico?wsdl 
 
     //http://localhost:8080/MasterOffline/ProcesarComprobanteElectronico?wsdl
     public function __construct ($wsdl = "http://localhost:8080/MasterOffline/ProcesarComprobanteElectronico?wsdl", $options = array()) {
         foreach (self::$classmap as $key => $value) {
             if (!isset($options['classmap'][$key])) {
-                $options['classmap'][$key] = $value;
+                $options['classmap'][$key] = $value;   
             }
         }
         parent::__construct($wsdl, $options);

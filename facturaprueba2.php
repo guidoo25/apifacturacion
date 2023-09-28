@@ -13,10 +13,10 @@ $procesarComprobanteElectronico = new ProcesarComprobanteElectronico();
 
 
 $configApp = new \configAplicacion();
-$configApp->dirFirma = "C:\\Directorio\\GUIDO ROBERTO GUTIERREZ GOMEZ 061022194517.p12";
+$configApp->dirFirma = "/home/guido/Directorio/guido.p12";
 $configApp->passFirma = "Guido1966";
-$configApp->dirAutorizados = "C:\\Directorio";
-$configApp->dirLogo = "C:\\Directorio\\logopoly.png";
+$configApp->dirAutorizados = "/home/guido/Directorio";
+$configApp->dirLogo = "/home/guido/Directorio/logopoly.png";
 $configCorreo = new \configCorreo();
 $configCorreo->correoAsunto = "Nuevo Comprobante electronico";
 $configCorreo->correoHost = "smtp.gmail.com";
@@ -40,7 +40,6 @@ $total = 0; // variable para almacenar el total de la factura
 
 foreach ($detalles as $detalle) {
     $detalleFactura = new detalleFactura();
-  
     $detalleFactura->codigoPrincipal = $detalle['codigo'];
     $detalleFactura->descripcion = $detalle['descripcion'];
     $detalleFactura->cantidad = $detalle['cantidad'];
@@ -57,7 +56,7 @@ foreach ($detalles as $detalle) {
     $impuesto->codigoPorcentaje = "2"; // 0-0% 2-12%
     $impuesto->tarifa = "12"; // 0 0 12
     $impuesto->baseImponible = $detalle['precioTotalSinImpuesto'];
-    $impuesto->valor = number_format($detalle['precioTotalSinImpuesto'] * 0.12, 2); // baseImponible * % impuesto
+    $impuesto->valor = $detalle['precioTotalSinImpuesto'] * 0.12; // baseImponible * % impuesto
     
     // Agregamos el impuesto al detalle de factura
     $detalleFactura->impuestos = array($impuesto);
@@ -159,13 +158,13 @@ $factura->infoAdicional = $camposAdicionales;
   
    $procesarComprobante = new procesarComprobante();
    $procesarComprobante->comprobante = $factura;
-   $procesarComprobante->envioSRI = true; //El sistema si es true 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia SRI 5-Nos devuelve respuesta
+   $procesarComprobante->envioSRI = false; //El sistema si es true 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia SRI 5-Nos devuelve respuesta
    $res = $procesarComprobanteElectronico->procesarComprobante($procesarComprobante);
    
    if ($res->return->estadoComprobante == "AUTORIZADO") {
        $procesarComprobante = new procesarComprobante();
        $procesarComprobante->comprobante = $factura;
-       $procesarComprobante->envioSRI = false; //El sistema si es false 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia Email al cliente 5-No devuelve respuesta
+       $procesarComprobante->envioSRI = true; //El sistema si es false 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia Email al cliente 5-No devuelve respuesta
        $procesarComprobanteElectronico->procesarComprobante($procesarComprobante);
    }
 

@@ -13,16 +13,16 @@ $procesarComprobanteElectronico = new ProcesarComprobanteElectronico();
 
 
 $configApp = new \configAplicacion();
-$configApp->dirFirma = "C:\\Directorio\\GUIDO ROBERTO GUTIERREZ GOMEZ 061022194517.p12";
-$configApp->passFirma = "Guido1966";
-$configApp->dirAutorizados = "C:\\Directorio";
-$configApp->dirLogo = "C:\\Directorio\\logopoly.png";
+$configApp->dirFirma = "/home/guido/Directorio/avelino.p12";
+$configApp->passFirma = "Garate2023";
+$configApp->dirAutorizados = "/home/guido/Directorio";
+$configApp->dirLogo = "/home/guido/Directorio/logoavelino.png";
 $configCorreo = new \configCorreo();
 $configCorreo->correoAsunto = "Nuevo Comprobante electronico";
 $configCorreo->correoHost = "smtp.gmail.com";
-$configCorreo->correoPass = "npickryinvbinjdy";
+$configCorreo->correoPass = "cbboguewhwgacmfl";
 $configCorreo->correoPort = "465";
-$configCorreo->correoRemitente = "guidoroberto.25@gmail.com";
+$configCorreo->correoRemitente = "comprobantesabelinogarate@gmail.com";
 $configCorreo->sslHabilitado = true;
 
 //DOLAR
@@ -40,7 +40,6 @@ $total = 0; // variable para almacenar el total de la factura
 
 foreach ($detalles as $detalle) {
     $detalleFactura = new detalleFactura();
-  
     $detalleFactura->codigoPrincipal = $detalle['codigo'];
     $detalleFactura->descripcion = $detalle['descripcion'];
     $detalleFactura->cantidad = $detalle['cantidad'];
@@ -57,7 +56,7 @@ foreach ($detalles as $detalle) {
     $impuesto->codigoPorcentaje = "2"; // 0-0% 2-12%
     $impuesto->tarifa = "12"; // 0 0 12
     $impuesto->baseImponible = $detalle['precioTotalSinImpuesto'];
-    $impuesto->valor = number_format($detalle['precioTotalSinImpuesto'] * 0.12, 2); // baseImponible * % impuesto
+    $impuesto->valor = $detalle['precioTotalSinImpuesto'] * 0.12; // baseImponible * % impuesto
     
     // Agregamos el impuesto al detalle de factura
     $detalleFactura->impuestos = array($impuesto);
@@ -89,11 +88,11 @@ $factura->configAplicacion = $configApp;
 $factura->configCorreo = $configCorreo;
 $factura->ambiente = "1"; //[1,Prueba][2,Produccion] 
 $factura->tipoEmision = "1"; //[1,Emision Normal]
-$factura->razonSocial = $razonsocial; //[Razon Social]
+$factura->razonSocial = "GARATE CHANG AVELINO JEREMIAS"; //[Razon Social]
 $factura->nombreComercial = "";  //[Nombre Comercial, si hay]*
-$factura->ruc = $ruc; //[Ruc]
+$factura->ruc = "0904265972001"; //[Ruc]
 $factura->codDoc = "01"; //[01, Factura] [04, Nota Credito] [05, Nota Debito] [06, Guia Remision] [07, Guia de Retencion]
-$factura->establecimiento = $establecimiento; //[Numero Establecimiento SRI]
+$factura->establecimiento = "MEJIA S/N Y VILLAMIL - MALECO"; //[Numero Establecimiento SRI]
 $factura->ptoEmision = $PTOemi; // [pto de emision ] **
 $factura->secuencial = $secuencial; // [Secuencia desde 1 (9)]
 $factura->fechaEmision = $fechaEmision; //[Fecha (dd/mm/yyyy)]

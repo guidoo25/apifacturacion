@@ -12,11 +12,6 @@ $procesarComprobanteElectronico = new ProcesarComprobanteElectronico();
 
 
 
-$configApp = new \configAplicacion();
-$configApp->dirFirma = "C:\\Directorio\\GUIDO ROBERTO GUTIERREZ GOMEZ 061022194517.p12";
-$configApp->passFirma = "Guido1966";
-$configApp->dirAutorizados = "C:\\Directorio";
-$configApp->dirLogo = "C:\\Directorio\\logopoly.png";
 $configCorreo = new \configCorreo();
 $configCorreo->correoAsunto = "Nuevo Comprobante electronico";
 $configCorreo->correoHost = "smtp.gmail.com";
@@ -57,7 +52,7 @@ foreach ($detalles as $detalle) {
     $impuesto->codigoPorcentaje = "2"; // 0-0% 2-12%
     $impuesto->tarifa = "12"; // 0 0 12
     $impuesto->baseImponible = $detalle['precioTotalSinImpuesto'];
-    $impuesto->valor = number_format($detalle['precioTotalSinImpuesto'] * 0.12, 2); // baseImponible * % impuesto
+    $impuesto->valor = $detalle['precioTotalSinImpuesto'] * 0.12; // baseImponible * % impuesto
     
     // Agregamos el impuesto al detalle de factura
     $detalleFactura->impuestos = array($impuesto);
@@ -73,6 +68,7 @@ foreach ($detalles as $detalle) {
   $razonSocialComprador=$detalle['razonSocialComprador'];
   $direccionComprador=$detalle['direccionComprador'];
   $formapago = $detalle['formaPago'];
+  $userdid = $detalle['usuarioid'];
   $correoComprador=$detalle['correoComprador'];
     // Agregamos el detalleFactura al array de detallesFactura
     $detallesFactura[] = $detalleFactura;
@@ -82,6 +78,13 @@ foreach ($detalles as $detalle) {
     // Creamos un objeto pago y lo agregamos al array de pagos
   
 }
+$configApp = new \configAplicacion();
+$directorioss = "C:\\Directorio\\Firma";
+$finaldir = $directorioss . $userdid . ".p12";
+$configApp->dirFirma = $finaldir;
+$configApp->passFirma = "Guido1966";
+$configApp->dirAutorizados = "C:\\Directorio";
+$configApp->dirLogo = "C:\\Directorio\\logopoly.png";
 
 
 $factura = new factura();
@@ -111,7 +114,7 @@ $factura->direccionComprador =  $direccionComprador; // Identificaci    on Compr
 
 $pago = new pagos();
 $pago->formaPago = $formapago;
-$pago->total = $total + $total * 0.12;
+$pago->total = round($total + $total * 0.12,2);
 $pagosArray[] = $pago;
 $camposAdicionales = array();
 $campoAdicional = new campoAdicional();
@@ -119,17 +122,14 @@ $campoAdicional->nombre = "Email";
 $campoAdicional->valor = $correoComprador;
 $camposAdicionales[0] = $campoAdicional;
 
-echo "El valor total de la factura es: " . $total;
 
 $totalImpuesto = new totalImpuesto();
 $totalImpuesto->codigo = "2";
 $totalImpuesto->codigoPorcentaje = "2";
 $totalImpuesto->baseImponible = $total;
-$totalImpuesto->valor = $total * 0.12;
+$totalImpuesto->valor = round($total * 0.12,2);
+
 $totalConImpuestoArray[] = $totalImpuesto;
-
-
-
 
 
 $factura->totalSinImpuestos = $total; // Total sin aplicar impuestos
@@ -138,7 +138,8 @@ $factura->totalDescuento = "0.00"; // Total Dtos
 // Obtenemos el cuerpo (body) de la solicitud HTTP; //Agrega el impuesto a la factura
 
 $factura->propina = "0.00"; // Propina 
-$factura->importeTotal = $total + $total * 0.12;
+$factura->importeTotal = round($total + $total * 0.12,2);
+
 $factura->moneda = "DOLAR"; 
 
 // Asignamos los detalles de factura, pagos e impuestos al objeto factura
@@ -149,10 +150,6 @@ $factura->totalConImpuesto = $totalConImpuestoArray;
 $factura->agenteRetencion = '';
 $factura->regimenRimpes1 = "Contribuyente Régimen RIMPE";
 $factura->infoAdicional = $camposAdicionales;
-
-
-
-
 
 /* Si queremos primero enviar al cliente el email y despues al sri utilizar este bloque
    */
@@ -168,7 +165,9 @@ $factura->infoAdicional = $camposAdicionales;
        $procesarComprobante->envioSRI = false; //El sistema si es false 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia Email al cliente 5-No devuelve respuesta
        $procesarComprobanteElectronico->procesarComprobante($procesarComprobante);
    }
-
-echo '<pre>';
-var_dump($res);
-echo '</pre>';
+   
+header('Content-Type: application/json'); // La respuesta es en formato JSON
+echo json_encode($res); // Convertimos el objeto $res a JSON y lo imprimimos
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
