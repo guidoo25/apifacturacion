@@ -165,7 +165,7 @@ $factura->infoAdicional = $camposAdicionales;
        $procesarComprobante->envioSRI = false; //El sistema si es false 1-Crea XML en el directorio de autorizado 2-Firma XML 3-Crea Ride en el directorio autorizado 4-Envia Email al cliente 5-No devuelve respuesta
        $procesarComprobanteElectronico->procesarComprobante($procesarComprobante);
    }
-   
+
 header('Content-Type: application/json'); // La respuesta es en formato JSON
 echo json_encode($res); // Convertimos el objeto $res a JSON y lo imprimimos
 header("Access-Control-Allow-Origin: *");
