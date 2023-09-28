@@ -15,9 +15,9 @@ $procesarComprobanteElectronico = new ProcesarComprobanteElectronico();
 $configCorreo = new \configCorreo();
 $configCorreo->correoAsunto = "Nuevo Comprobante electronico";
 $configCorreo->correoHost = "smtp.gmail.com";
-$configCorreo->correoPass = "npickryinvbinjdy";
+$configCorreo->correoPass = "+++++";
 $configCorreo->correoPort = "465";
-$configCorreo->correoRemitente = "guidoroberto.25@gmail.com";
+$configCorreo->correoRemitente = "++++";
 $configCorreo->sslHabilitado = true;
 
 //DOLAR
